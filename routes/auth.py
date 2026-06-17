@@ -4,4 +4,4 @@ auth_bp = Blueprint('auth', _name_)
 
 @auth_bp.route('/login')
 def login():
-    return render_template('login.html') # Aquí llamará a tu plantilla real
+    return render_template('login.html')
