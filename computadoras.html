@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block titulo %}Reportar Falla - Lab-Status{% endblock %}
+{% block subtitulo %}Reportar Falla{% endblock %}
+
+{% block contenido %}
+
+<div class="card card-form">
+    <div class="card-header">
+        <span class="material-icons">report_problem</span>
+        Nuevo reporte de falla
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            <div class="form-grid">
+
+                <div class="campo-form campo-ancho">
+                    <label for="computadora_id">Computadora afectada *</label>
+                    <select id="computadora_id" name="computadora_id" required>
+                        <option value="">-- Selecciona un equipo --</option>
+                        {% for c in computadoras %}
+                        <option value="{{ c.id }}">
+                            {{ c.codigo }} {% if c.lab_nombre %}— {{ c.lab_nombre }}{% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="campo-form">
+                    <label for="tipo_falla">Tipo de falla</label>
+                    <select id="tipo_falla" name="tipo_falla">
+                        <option value="Hardware">Hardware (físico)</option>
+                        <option value="Software">Software (programas)</option>
+                        <option value="Red">Red / Internet</option>
+                        <option value="Periférico">Periférico (mouse, teclado...)</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+
+                <div class="campo-form campo-ancho">
+                    <label for="descripcion">Descripción del problema *</label>
+                    <textarea id="descripcion" name="descripcion" rows="4"
+                              placeholder="Describe el problema con el mayor detalle posible..."
+                              required></textarea>
+                </div>
+
+            </div>
+
+            <div class="form-botones">
+                <button type="submit" class="btn-primario">
+                    <span class="material-icons">send</span>
+                    Enviar Reporte
+                </button>
+                <a href="{{ url_for('reportes.lista') }}" class="btn-secundario">
+                    <span class="material-icons">arrow_back</span>
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

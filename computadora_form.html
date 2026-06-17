@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab-Status - Iniciar Sesión</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="login-body">
+
+<div class="login-container">
+
+    <!-- Panel izquierdo: decorativo -->
+    <div class="login-panel-izq">
+        <div class="login-branding">
+            <span class="material-icons login-icon-grande">monitor</span>
+            <h1>Lab-Status</h1>
+            <p>Sistema de Control de Equipos de Laboratorio</p>
+        </div>
+        <div class="login-stats-deco">
+            <div class="stat-deco">
+                <span class="material-icons">computer</span>
+                <span>Equipos</span>
+            </div>
+            <div class="stat-deco">
+                <span class="material-icons">build</span>
+                <span>Mantenimiento</span>
+            </div>
+            <div class="stat-deco">
+                <span class="material-icons">assessment</span>
+                <span>Reportes</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel derecho: formulario -->
+    <div class="login-panel-der">
+        <div class="login-form-wrapper">
+            <h2>Bienvenido</h2>
+            <p class="login-subtitulo">Ingresa tus credenciales para continuar</p>
+
+            <!-- Mensajes de error -->
+            {% with mensajes = get_flashed_messages(with_categories=true) %}
+                {% if mensajes %}
+                    {% for cat, msg in mensajes %}
+                        <div class="alerta alerta-{{ cat }}">
+                            <span class="material-icons">error</span>
+                            {{ msg }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="{{ url_for('auth.login') }}">
+                <div class="campo-form">
+                    <label for="usuario">Usuario</label>
+                    <div class="input-icono">
+                        <span class="material-icons">person</span>
+                        <input type="text" id="usuario" name="usuario"
+                               placeholder="Tu nombre de usuario" required autofocus>
+                    </div>
+                </div>
+
+                <div class="campo-form">
+                    <label for="contrasena">Contraseña</label>
+                    <div class="input-icono">
+                        <span class="material-icons">lock</span>
+                        <input type="password" id="contrasena" name="contrasena"
+                               placeholder="Tu contraseña" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primario btn-bloque">
+                    <span class="material-icons">login</span>
+                    Iniciar Sesión
+                </button>
+            </form>
+
+            <p class="login-hint">
+                Credenciales por defecto: <strong>admin</strong> / <strong>admin123</strong>
+            </p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

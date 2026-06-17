@@ -1,0 +1,49 @@
+// ============================================================
+// main.js - Funciones generales de Lab-Status
+// ============================================================
+
+/**
+ * Abre o cierra el sidebar en pantallas pequeñas
+ */
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('abierto');
+}
+
+/**
+ * Muestra una notificación flotante temporal
+ * @param {string} mensaje - Texto a mostrar
+ * @param {string} tipo    - 'success' o 'error'
+ */
+function mostrarNotificacion(mensaje, tipo = 'success') {
+    // Eliminar notificación anterior si existe
+    const anterior = document.querySelector('.notif-flotante');
+    if (anterior) anterior.remove();
+
+    const notif = document.createElement('div');
+    notif.className = `notif-flotante notif-${tipo}`;
+    notif.innerHTML = `
+        <span class="material-icons">${tipo === 'success' ? 'check_circle' : 'error'}</span>
+        ${mensaje}
+    `;
+    document.body.appendChild(notif);
+
+    // Desaparecer automáticamente después de 3 segundos
+    setTimeout(() => {
+        notif.style.opacity = '0';
+        notif.style.transition = 'opacity 0.4s';
+        setTimeout(() => notif.remove(), 400);
+    }, 3000);
+}
+
+// Ocultar alertas flash automáticamente después de 4 segundos
+document.addEventListener('DOMContentLoaded', () => {
+    const alertas = document.querySelectorAll('.alerta');
+    alertas.forEach(alerta => {
+        setTimeout(() => {
+            alerta.style.opacity = '0';
+            alerta.style.transition = 'opacity 0.5s';
+            setTimeout(() => alerta.remove(), 500);
+        }, 4000);
+    });
+});

@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% block titulo %}Dashboard - Lab-Status{% endblock %}
+{% block subtitulo %}Panel Principal{% endblock %}
+
+{% block contenido %}
+
+<!-- Tarjetas de estadísticas -->
+<div class="stats-grid">
+    <div class="stat-card stat-azul">
+        <div class="stat-info">
+            <span class="stat-numero">{{ total_labs }}</span>
+            <span class="stat-label">Laboratorios</span>
+        </div>
+        <span class="material-icons stat-icono">meeting_room</span>
+    </div>
+
+    <div class="stat-card stat-verde">
+        <div class="stat-info">
+            <span class="stat-numero">{{ operativos }}</span>
+            <span class="stat-label">Operativos</span>
+        </div>
+        <span class="material-icons stat-icono">check_circle</span>
+    </div>
+
+    <div class="stat-card stat-amarillo">
+        <div class="stat-info">
+            <span class="stat-numero">{{ mantenimiento }}</span>
+            <span class="stat-label">En Mantenimiento</span>
+        </div>
+        <span class="material-icons stat-icono">build</span>
+    </div>
+
+    <div class="stat-card stat-rojo">
+        <div class="stat-info">
+            <span class="stat-numero">{{ fuera_servicio }}</span>
+            <span class="stat-label">Fuera de Servicio</span>
+        </div>
+        <span class="material-icons stat-icono">cancel</span>
+    </div>
+
+    <div class="stat-card stat-morado">
+        <div class="stat-info">
+            <span class="stat-numero">{{ total_comps }}</span>
+            <span class="stat-label">Total Equipos</span>
+        </div>
+        <span class="material-icons stat-icono">computer</span>
+    </div>
+
+    <div class="stat-card stat-naranja">
+        <div class="stat-info">
+            <span class="stat-numero">{{ reportes_pendientes }}</span>
+            <span class="stat-label">Reportes Pendientes</span>
+        </div>
+        <span class="material-icons stat-icono">report_problem</span>
+    </div>
+</div>
+
+<!-- Sección inferior: gráfico + tabla de reportes recientes -->
+<div class="dashboard-inferior">
+
+    <!-- Gráfico de estados (usando Canvas) -->
+    <div class="card">
+        <div class="card-header">
+            <span class="material-icons">pie_chart</span>
+            Estado de Equipos
+        </div>
+        <div class="card-body centrado">
+            <canvas id="graficoEstados" width="260" height="260"></canvas>
+        </div>
+    </div>
+
+    <!-- Últimos reportes -->
+    <div class="card">
+        <div class="card-header">
+            <span class="material-icons">history</span>
+            Últimos Reportes
+            <a href="{{ url_for('reportes.lista') }}" class="btn-texto">Ver todos</a>
+        </div>
+        <div class="card-body sin-padding">
+            {% if ultimos_reportes %}
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <th>Equipo</th>
+                        <th>Descripción</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in ultimos_reportes %}
+                    <tr>
+                        <td><strong>{{ r.comp_codigo }}</strong></td>
+                        <td>{{ r.descripcion[:40] }}{% if r.descripcion|length > 40 %}...{% endif %}</td>
+                        <td>
+                            <span class="badge badge-{{ r.estado_reporte }}">
+                                {{ r.estado_reporte }}
+                            </span>
+                        </td>
+                        <td>{{ r.fecha[:16] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+                <div class="vacio">
+                    <span class="material-icons">inbox</span>
+                    <p>No hay reportes aún</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Gráfico de pastel con Canvas puro (sin librerías externas)
+const canvas = document.getElementById('graficoEstados');
+const ctx = canvas.getContext('2d');
+
+const datos = [
+    { label: 'Operativos', valor: {{ operativos }}, color: '#22c55e' },
+    { label: 'Mantenimiento', valor: {{ mantenimiento }}, color: '#f59e0b' },
+    { label: 'Fuera de servicio', valor: {{ fuera_servicio }}, color: '#ef4444' }
+];
+
+const total = datos.reduce((s, d) => s + d.valor, 0);
+
+if (total === 0) {
+    ctx.fillStyle = '#e5e7eb';
+    ctx.beginPath();
+    ctx.arc(130, 130, 100, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#6b7280';
+    ctx.font = '14px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('Sin datos', 130, 135);
+} else {
+    let angulo = -Math.PI / 2; // Empieza desde arriba
+
+    datos.forEach(d => {
+        const slice = (d.valor / total) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.moveTo(130, 130);
+        ctx.arc(130, 130, 100, angulo, angulo + slice);
+        ctx.fillStyle = d.color;
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        angulo += slice;
+    });
+
+    // Leyenda debajo del gráfico
+    let yPos = 245;
+    datos.forEach(d => {
+        ctx.fillStyle = d.color;
+        ctx.fillRect(20, yPos, 14, 14);
+        ctx.fillStyle = '#374151';
+        ctx.font = '12px Inter';
+        ctx.textAlign = 'left';
+        ctx.fillText(`${d.label}: ${d.valor}`, 40, yPos + 11);
+        yPos += 20;
+    });
+}
+</script>
+{% endblock %}

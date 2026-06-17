@@ -1,0 +1,92 @@
+# ============================================================
+# database/db.py - Conexión y creación de la base de datos
+# Usamos SQLite porque no necesita instalación extra
+# ============================================================
+
+import sqlite3
+import os
+
+# Ruta donde se guardará el archivo de la base de datos
+DB_PATH = os.path.join(os.path.dirname(__file__), "lab_status.db")
+
+
+def get_connection():
+    """Abre una conexión a la base de datos SQLite."""
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row  # Permite acceder a columnas por nombre
+    return conn
+
+
+def init_db():
+    """
+    Crea todas las tablas si no existen.
+    Se ejecuta una sola vez al iniciar la app.
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    # --- Tabla de usuarios (para el login) ---
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS usuarios (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT NOT NULL,
+            usuario TEXT UNIQUE NOT NULL,
+            contrasena TEXT NOT NULL,
+            rol TEXT DEFAULT 'tecnico'
+        )
+    """)
+
+    # --- Tabla de laboratorios ---
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS laboratorios (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT NOT NULL,
+            ubicacion TEXT,
+            capacidad INTEGER DEFAULT 0,
+            fecha_creacion TEXT DEFAULT (date('now'))
+        )
+    """)
+
+    # --- Tabla de computadoras ---
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS computadoras (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            codigo TEXT UNIQUE NOT NULL,
+            marca TEXT,
+            modelo TEXT,
+            procesador TEXT,
+            ram TEXT,
+            disco TEXT,
+            estado TEXT DEFAULT 'operativo',
+            lab_id INTEGER,
+            fecha_registro TEXT DEFAULT (date('now')),
+            FOREIGN KEY (lab_id) REFERENCES laboratorios(id)
+        )
+    """)
+
+    # --- Tabla de reportes de fallas ---
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS reportes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            computadora_id INTEGER NOT NULL,
+            descripcion TEXT NOT NULL,
+            tipo_falla TEXT,
+            estado_reporte TEXT DEFAULT 'pendiente',
+            usuario_id INTEGER,
+            fecha TEXT DEFAULT (datetime('now', 'localtime')),
+            FOREIGN KEY (computadora_id) REFERENCES computadoras(id),
+            FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+        )
+    """)
+
+    # Insertar usuario administrador por defecto si no existe
+    cursor.execute("SELECT id FROM usuarios WHERE usuario = 'admin'")
+    if not cursor.fetchone():
+        cursor.execute("""
+            INSERT INTO usuarios (nombre, usuario, contrasena, rol)
+            VALUES ('Administrador', 'admin', 'admin123', 'admin')
+        """)
+        print("👤 Usuario admin creado: usuario=admin / contraseña=admin123")
+
+    conn.commit()
+    conn.close()

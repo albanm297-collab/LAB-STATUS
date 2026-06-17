@@ -1,0 +1,142 @@
+# 🖥️ Lab-Status — Sistema de Control de Laboratorios
+
+Proyecto de Grado | Bachillerato Técnico en Informática
+
+---
+
+## 📁 Estructura del Proyecto
+
+```
+lab-status/
+├── app.py                  ← Archivo principal (aquí se ejecuta todo)
+├── requirements.txt        ← Librerías de Python necesarias
+├── README.md               ← Este archivo
+│
+├── database/
+│   ├── __init__.py
+│   ├── db.py               ← Conexión y creación de la base de datos
+│   └── lab_status.db       ← Se crea automáticamente al ejecutar
+│
+├── routes/
+│   ├── __init__.py
+│   ├── auth.py             ← Login y logout
+│   ├── dashboard.py        ← Panel principal
+│   ├── laboratorios.py     ← CRUD de laboratorios
+│   ├── computadoras.py     ← CRUD de computadoras
+│   └── reportes.py         ← Reportes de fallas + exportar PDF
+│
+├── templates/
+│   ├── base.html           ← Plantilla base con sidebar
+│   ├── login.html          ← Página de inicio de sesión
+│   ├── dashboard.html      ← Panel con estadísticas
+│   ├── laboratorios.html   ← Lista de laboratorios
+│   ├── laboratorio_form.html
+│   ├── computadoras.html   ← Lista de computadoras con búsqueda
+│   ├── computadora_form.html
+│   ├── reportes.html       ← Historial de reportes
+│   └── reporte_form.html   ← Formulario de nueva falla
+│
+└── static/
+    ├── css/
+    │   └── style.css       ← Todos los estilos del sistema
+    └── js/
+        └── main.js         ← Funciones JavaScript
+```
+
+---
+
+## ⚙️ Pasos para ejecutar en Visual Studio Code
+
+### 1. Instalar Python
+- Descarga Python desde https://python.org/downloads
+- Durante la instalación, marca la opción **"Add Python to PATH"**
+- Verifica en la terminal: `python --version`
+
+### 2. Abrir el proyecto en VS Code
+- Abre VS Code
+- Ve a **File → Open Folder** y selecciona la carpeta `lab-status`
+
+### 3. Abrir la terminal integrada
+- En VS Code: **Terminal → New Terminal** (o presiona `` Ctrl+` ``)
+
+### 4. Crear un entorno virtual (recomendado)
+```bash
+python -m venv venv
+```
+
+Activarlo:
+- **Windows:** `venv\Scripts\activate`
+- **Mac/Linux:** `source venv/bin/activate`
+
+Sabrás que está activo porque aparece `(venv)` al inicio de la línea.
+
+### 5. Instalar las dependencias
+```bash
+pip install -r requirements.txt
+```
+
+### 6. Ejecutar la aplicación
+```bash
+python app.py
+```
+
+Deberías ver algo así:
+```
+✅ Base de datos lista
+👤 Usuario admin creado: usuario=admin / contraseña=admin123
+🚀 Servidor iniciando en http://127.0.0.1:5000
+```
+
+### 7. Abrir en el navegador
+Abre tu navegador y ve a: **http://127.0.0.1:5000**
+
+---
+
+## 🔑 Credenciales por defecto
+
+| Campo      | Valor     |
+|------------|-----------|
+| Usuario    | admin     |
+| Contraseña | admin123  |
+
+---
+
+## 🚀 Funcionalidades
+
+| Función                    | Descripción |
+|---------------------------|-------------|
+| **Login**                  | Autenticación con usuario y contraseña |
+| **Dashboard**              | Estadísticas y gráfico de estados |
+| **Laboratorios**           | Registrar, editar y eliminar laboratorios |
+| **Computadoras**           | Registrar equipos con especificaciones |
+| **Estado de equipos**      | Operativo / Mantenimiento / Fuera de servicio |
+| **Cambio rápido de estado**| Sin recargar la página (AJAX) |
+| **Reportar falla**         | Formulario de fallas con tipo y descripción |
+| **Historial**              | Ver y filtrar todos los reportes |
+| **Resolver reporte**       | Marcar como resuelto y liberar el equipo |
+| **Exportar PDF**           | Descargar reportes en formato PDF |
+| **Búsqueda**               | Filtrar equipos por código, marca o estado |
+
+---
+
+## 🛠️ Tecnologías usadas
+
+- **Python 3** + **Flask** — Backend y rutas
+- **SQLite** — Base de datos (no necesita instalación extra)
+- **HTML5 + CSS3** — Interfaz de usuario
+- **JavaScript (Vanilla)** — Interactividad sin librerías
+- **fpdf2** — Generación de PDF
+- **Material Icons (Google)** — Iconos del sistema
+
+---
+
+## ❓ Problemas comunes
+
+**"No module named flask"**
+→ Asegúrate de haber ejecutado `pip install -r requirements.txt` con el entorno virtual activo.
+
+**"Address already in use"**
+→ Ya hay algo corriendo en el puerto 5000. Cierra otras terminales o cambia el puerto en `app.py`: `app.run(port=5001)`
+
+**La base de datos no se crea**
+→ Asegúrate de ejecutar `python app.py` desde la carpeta raíz del proyecto.
