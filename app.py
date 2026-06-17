@@ -27,6 +27,6 @@ app.register_blueprint(reportes_bp)
 # Punto de entrada: ejecutar la app
 if __name__ == "__main__":
     init_db()  # Crear las tablas si no existen
-    print("✅ Base de datos lista")
-    print("🚀 Servidor iniciando en http://127.0.0.1:5000")
+    print(" Base de datos lista")
+    print("Servidor iniciando en http://127.0.0.1:5000")
     app.run(debug=True)
