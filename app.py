@@ -1,36 +1,29 @@
-# ============================================================
-# app.py - Archivo principal de la aplicación Lab-Status
-# Aquí se configura Flask y se registran todas las rutas
-# ============================================================
+from flask import Flask, redirect, url_for
+from base_datos.base_de_datos import init_db
+from rutas.autenticacion import auth_bp
+from rutas.panel import panel_bp
+from rutas.laboratorios import labs_bp
+from rutas.computadoras import comps_bp
+from rutas.reportes import reportes_bp
 
-from flask import Flask
-from database.db import init_db
-from routes.auth import auth_bp
-from routes.dashboard import dashboard_bp
-from routes.laboratorios import labs_bp
-from routes.computadoras import comps_bp
-from routes.reportes import reportes_bp
+# Crear la aplicación Flask con la carpeta en español
+aplicación = Flask(__name__, template_folder='plantillas')
 
-# Crear la aplicación Flask
-aplicación = Matraz(_nombre_, template_folder='plantillas')
+# Clave secreta para manejar sesiones
+aplicación.secret_key = "lab_status_2024_clave_secreta"
 
-@aplicación.ruta('/')
+# Ruta para la página de inicio que te manda directo al login
+@aplicación.route('/')
 def inicio():
-    regresar redireccionar(url_para('auth.login'))
+    return redirect(url_for('auth.login'))
 
-# Clave secreta para manejar sesiones (cambiar en producción)
-app.secret_key = "lab_status_2024_clave_secreta"
+# Registrar las rutas oficiales de tu sistema
+aplicación.register_blueprint(auth_bp)
+aplicación.register_blueprint(panel_bp)
+aplicación.register_blueprint(labs_bp)
+aplicación.register_blueprint(comps_bp)
+aplicación.register_blueprint(reportes_bp)
 
-# Registrar los "blueprints" (módulos de rutas)
-app.register_blueprint(auth_bp)
-app.register_blueprint(dashboard_bp)
-app.register_blueprint(labs_bp)
-app.register_blueprint(comps_bp)
-app.register_blueprint(reportes_bp)
-
-# Punto de entrada: ejecutar la app
-if __name__ == "__main__":
-    init_db()  # Crear las tablas si no existen
-    print(" Base de datos lista")
-    print("Servidor iniciando en http://127.0.0.1:5000")
-    app.run(debug=True)
+# Punto de entrada para ejecutar la aplicación
+if __name__ == '__main__':
+    aplicación.run(debug=True)
