@@ -12,7 +12,11 @@ from routes.computadoras import comps_bp
 from routes.reportes import reportes_bp
 
 # Crear la aplicación Flask
-app = Flask(__name__)
+aplicación = Matraz(_nombre_, template_folder='plantillas')
+
+@aplicación.ruta('/')
+def inicio():
+    regresar redireccionar(url_para('auth.login'))
 
 # Clave secreta para manejar sesiones (cambiar en producción)
 app.secret_key = "lab_status_2024_clave_secreta"
