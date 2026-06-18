@@ -1,5 +1,5 @@
 from flask import Flask, redirect, url_for
-from base_datos.base_de_datos import init_db
+from base_de_datos.base_de_datos import init_db
 from rutas.autenticacion import auth_bp
 from rutas.panel import panel_bp
 from rutas.laboratorios import labs_bp
